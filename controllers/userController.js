@@ -10,7 +10,9 @@ const getUsersByKeyword = async (req, res) => {
 			displayName: { $regex: req.params.keyword, $options: "i" },
 		})
 			.select("displayName")
-			.select("username");
+			.select("username")
+			.select("pendingRequests")
+			.select("incomingRequests");
 		res.status(200).json({
 			message:
 				"Fetched list of users that contains keyword " + req.params.keyword,
@@ -20,7 +22,24 @@ const getUsersByKeyword = async (req, res) => {
 		res.status(400).json({ message: e });
 	}
 };
+
+const getFriendsRequests = async (req, res) => {
+	try {
+		if (!req?.params?.id) throw Error("User ID must be provided");
+		const userFriendsRequests = await FriendsRequest.findOne({
+			ownerId: req.params.id,
+		}).select("pendingRequests incomingRequests");
+
+		res.status(200).json({
+			message: "User's requests fetched",
+			requests: userFriendsRequests,
+		});
+	} catch (e) {
+		res.status(400).json({ message: e });
+	}
+};
 const sendFriendsInvitation = async (req, res) => {
+	console.log("invitation sending...");
 	try {
 		if (!req.body.invitedUserId) throw Error("User ID must be provided");
 		if (!req.body.sendByUserId) throw Error("Owner ID must be provided");
@@ -93,4 +112,8 @@ const sendFriendsInvitation = async (req, res) => {
 		res.status(400).json({ message: e.message });
 	}
 };
-module.exports = { getUsersByKeyword, sendFriendsInvitation };
+module.exports = {
+	getUsersByKeyword,
+	sendFriendsInvitation,
+	getFriendsRequests,
+};

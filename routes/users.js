@@ -4,9 +4,11 @@ const router = express.Router();
 const {
 	getUsersByKeyword,
 	sendFriendsInvitation,
+	getFriendsRequests,
 } = require("../controllers/userController");
 
 router.get("/:keyword", getUsersByKeyword);
+router.get("/requests/:id", getFriendsRequests);
 router.post("/invite", sendFriendsInvitation);
 
 module.exports = router;

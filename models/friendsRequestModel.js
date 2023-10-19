@@ -11,14 +11,14 @@ const friendsRequestSchema = new Schema({
 		{
 			type: Schema.Types.ObjectId,
 			required: true,
-			unique: true,
+			unique: false,
 		},
 	],
 	pendingRequests: [
 		{
 			type: Schema.Types.ObjectId,
 			required: true,
-			unique: true,
+			unique: false,
 		},
 	],
 });
