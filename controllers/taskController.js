@@ -24,7 +24,6 @@ const createTask = async (req, res, next) => {
 		if (!req?.body?.owner) {
 			throw Error("Task must have the owner.");
 		}
-		console.log(req?.body);
 		const task = await Task.create({
 			text: req?.body?.text,
 			deadline: req?.body?.deadline,

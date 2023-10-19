@@ -4,7 +4,6 @@ const FriendsRequest = require("../models/friendsRequestModel");
 const getUsersByKeyword = async (req, res) => {
 	try {
 		if (req?.params?.keyword?.length < 3) {
-			console.log("Haloo");
 			throw Error("Type at least 3 characters");
 		}
 		const users = await User.find({
