@@ -21,6 +21,13 @@ const friendsRequestSchema = new Schema({
 			unique: false,
 		},
 	],
+	friends: [
+		{
+			type: Schema.Types.ObjectId,
+			required: false,
+			unique: false,
+		},
+	],
 });
 
 module.exports = mongoose.model("FriendsRequest", friendsRequestSchema);

@@ -23,12 +23,27 @@ const getUsersByKeyword = async (req, res) => {
 	}
 };
 
+const getUserDetails = async (req, res) => {
+	try {
+		if (!req?.params?.id) throw Error("User ID must be provided");
+		const user = await User.findById(req.params.id)
+			.select("displayName")
+			.select("username");
+		res.status(200).json({
+			message: "User's details fetched",
+			user: user,
+		});
+	} catch (e) {
+		res.status(400).json({ message: e });
+	}
+};
+
 const getFriendsRequests = async (req, res) => {
 	try {
 		if (!req?.params?.id) throw Error("User ID must be provided");
 		const userFriendsRequests = await FriendsRequest.findOne({
 			ownerId: req.params.id,
-		}).select("pendingRequests incomingRequests");
+		}).select("pendingRequests incomingRequests friends");
 
 		res.status(200).json({
 			message: "User's requests fetched",
@@ -38,8 +53,66 @@ const getFriendsRequests = async (req, res) => {
 		res.status(400).json({ message: e });
 	}
 };
+
+const acceptFriendsRequest = async (req, res) => {
+	try {
+		if (!req?.body?.acceptedUserId || !req.body?.id)
+			throw Error("User ID must be provided");
+		const userRequests = await FriendsRequest.findOne({ ownerId: req.body.id });
+		const acceptedUserRequests = await FriendsRequest.findOne({
+			ownerId: req.body.acceptedUserId,
+		});
+		if (!userRequests) throw Error("Requests Model not found");
+		if (!acceptedUserRequests) throw Error("Requests Model not found");
+		await userRequests.updateOne(
+			{
+				$push: { friends: req.body.acceptedUserId },
+				$pullAll: { incomingRequests: [req.body.acceptedUserId] },
+			},
+			{ new: true }
+		);
+		await acceptedUserRequests.updateOne({
+			$push: { friends: req.body.id },
+			$pullAll: { pendingRequests: [req.body.id] },
+		});
+		res
+			.status(200)
+			.json({ message: "User added to friends list", friends: userRequests });
+	} catch (e) {
+		res.status(400).json({ message: e });
+	}
+};
+
+const declineFriendsRequest = async (req, res) => {
+	try {
+		if (!req?.body?.declinedUserId || !req.body?.id)
+			throw Error("User ID must be provided");
+
+		const userRequests = await FriendsRequest.findOne({
+			ownerId: req.body.id,
+		});
+		const declinedUserRequests = await FriendsRequest.findOne({
+			ownerId: req.body.declinedUserId,
+		});
+		if (!userRequests) throw Error("Requests Model not found");
+		if (!declinedUserRequests) throw Error("Requests Model not found");
+		await userRequests.updateOne(
+			{
+				$pullAll: { incomingRequests: [req.body.declinedUserId] },
+			},
+			{ new: true }
+		);
+		await declinedUserRequests.updateOne({
+			$pullAll: { pendingRequests: [req.body.id] },
+		});
+		res
+			.status(200)
+			.json({ message: "User requests declined", friends: userRequests });
+	} catch (e) {
+		res.status(400).json({ message: e });
+	}
+};
 const sendFriendsInvitation = async (req, res) => {
-	console.log("invitation sending...");
 	try {
 		if (!req.body.invitedUserId) throw Error("User ID must be provided");
 		if (!req.body.sendByUserId) throw Error("Owner ID must be provided");
@@ -116,4 +189,7 @@ module.exports = {
 	getUsersByKeyword,
 	sendFriendsInvitation,
 	getFriendsRequests,
+	getUserDetails,
+	acceptFriendsRequest,
+	declineFriendsRequest,
 };
