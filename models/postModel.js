@@ -16,6 +16,11 @@ const postSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		required: true,
 	},
+	isDone: {
+		type: Boolean,
+		required: true,
+		default: false,
+	},
 });
 
 module.exports = mongoose.model("Post", postSchema);
