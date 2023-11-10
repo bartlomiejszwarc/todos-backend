@@ -16,6 +16,14 @@ const userSchema = new Schema({
 		type: String,
 		required: false,
 	},
+	phoneNumber: {
+		type: String,
+		required: false,
+	},
+	email: {
+		type: String,
+		required: false,
+	},
 });
 
 module.exports = mongoose.model("User", userSchema);

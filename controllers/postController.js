@@ -12,11 +12,11 @@ const getFriendsPosts = async (req, res, next) => {
 			_id: 0,
 		});
 		const friendsIds = friends.map((friends) => friends.friends);
-		const userPosts = await Post.find({ owner: req.params.id });
+		const userPosts = await Post.find({ owner: req.params.id }).sort("-date");
 
 		const friendsPosts = await Post.find({
 			owner: { $in: friendsIds[0] },
-		});
+		}).sort("-date");
 
 		res.status(200).json({
 			message: "Posts fetched successfully.",
@@ -30,7 +30,6 @@ const getFriendsPosts = async (req, res, next) => {
 
 const createPost = async (req, res, next) => {
 	try {
-		console.log("Creating post");
 		if (!req?.body?.text) {
 			throw Error("Post must contain a text.");
 		}
@@ -43,7 +42,6 @@ const createPost = async (req, res, next) => {
 		});
 		res.status(200).json({ message: "Post created successfully.", post: post });
 	} catch (e) {
-		console.log(e);
 		res.status(400).json({ message: e.message });
 	}
 };

@@ -28,7 +28,10 @@ const getUserDetails = async (req, res) => {
 		if (!req?.params?.id) throw Error("User ID must be provided");
 		const user = await User.findById(req.params.id)
 			.select("displayName")
-			.select("username");
+			.select("username")
+			.select("phoneNumber")
+			.select("email");
+
 		res.status(200).json({
 			message: "User's details fetched",
 			user: user,
@@ -36,6 +39,23 @@ const getUserDetails = async (req, res) => {
 	} catch (e) {
 		res.status(400).json({ message: e });
 	}
+};
+
+const updateUserDetails = async (req, res) => {
+	try {
+		if (!req.body.id) throw Error("User ID must be provided");
+		const user = await User.findOneAndUpdate(
+			{ _id: req.body.id },
+			{
+				$set: {
+					displayName: req.body.displayName,
+					phoneNumber: req.body.phoneNumber,
+					email: req.body.email,
+				},
+			}
+		);
+		res.status(200).json({ message: "User's details updated.", user: user });
+	} catch (e) {}
 };
 
 const getFriendsRequests = async (req, res) => {
@@ -192,4 +212,5 @@ module.exports = {
 	getUserDetails,
 	acceptFriendsRequest,
 	declineFriendsRequest,
+	updateUserDetails,
 };

@@ -8,6 +8,7 @@ const {
 	getUserDetails,
 	acceptFriendsRequest,
 	declineFriendsRequest,
+	updateUserDetails,
 } = require("../controllers/userController");
 
 router.get("/:keyword", getUsersByKeyword);
@@ -16,5 +17,6 @@ router.get("/details/:id", getUserDetails);
 router.post("/invite", sendFriendsInvitation);
 router.post("/requests/accept", acceptFriendsRequest);
 router.post("/requests/decline", declineFriendsRequest);
+router.put("/details", updateUserDetails);
 
 module.exports = router;
