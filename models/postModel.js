@@ -10,7 +10,7 @@ const postSchema = new Schema({
 	date: {
 		type: Date,
 		required: true,
-		default: Date.now(),
+		default: Date.now,
 	},
 	owner: {
 		type: Schema.Types.ObjectId,

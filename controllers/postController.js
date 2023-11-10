@@ -1,6 +1,5 @@
 const Post = require("../models/postModel");
 const Friends = require("../models/friendsRequestModel");
-const User = require("../models/userModel");
 
 const getFriendsPosts = async (req, res, next) => {
 	try {
