@@ -52,8 +52,10 @@ const updateUserDetails = async (req, res) => {
 					phoneNumber: req.body.phoneNumber,
 					email: req.body.email,
 				},
-			}
+			},
+			{ new: true }
 		);
+		user.save();
 		res.status(200).json({ message: "User's details updated.", user: user });
 	} catch (e) {}
 };

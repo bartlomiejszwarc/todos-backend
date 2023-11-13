@@ -53,4 +53,14 @@ const register = async (req, res) => {
 	}
 };
 
-module.exports = { login, register };
+const checkIfAuthenticated = async (req, res) => {
+	try {
+		return res
+			.status(200)
+			.json({ message: "User authenticated", user: req.user });
+	} catch (e) {
+		return res.status(401).json({ message: e });
+	}
+};
+
+module.exports = { login, register, checkIfAuthenticated };
