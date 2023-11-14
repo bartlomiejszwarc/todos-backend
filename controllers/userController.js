@@ -26,15 +26,16 @@ const getUsersByKeyword = async (req, res) => {
 const getUserDetails = async (req, res) => {
 	try {
 		if (!req?.params?.id) throw Error("User ID must be provided");
-		const user = await User.findById(req.params.id)
-			.select("displayName")
-			.select("username")
-			.select("phoneNumber")
-			.select("email");
-
+		const user = await User.findById(req.params.id);
 		res.status(200).json({
 			message: "User's details fetched",
-			user: user,
+			user: {
+				_id: user._id,
+				username: user.username,
+				displayName: user.displayName,
+				email: user.showEmail ? user.email : null,
+				phoneNumber: user.showPhoneNumber ? user.phoneNumber : null,
+			},
 		});
 	} catch (e) {
 		res.status(400).json({ message: e });
