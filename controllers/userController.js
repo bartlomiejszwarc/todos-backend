@@ -43,21 +43,25 @@ const getUserDetails = async (req, res) => {
 
 const updateUserDetails = async (req, res) => {
 	try {
-		if (!req.body.id) throw Error("User ID must be provided");
+		if (!req.query.userId) throw Error("User ID must be provided");
 		const user = await User.findOneAndUpdate(
-			{ _id: req.body.id },
+			{ _id: req.query.userId },
 			{
 				$set: {
 					displayName: req.body.displayName,
 					phoneNumber: req.body.phoneNumber,
 					email: req.body.email,
+					showPhoneNumber: req.body.showPhoneNumber,
+					showEmail: req.body.showEmail,
 				},
 			},
 			{ new: true }
 		);
 		user.save();
 		res.status(200).json({ message: "User's details updated.", user: user });
-	} catch (e) {}
+	} catch (e) {
+		res.status(400).json({ message: e });
+	}
 };
 
 const getFriendsRequests = async (req, res) => {

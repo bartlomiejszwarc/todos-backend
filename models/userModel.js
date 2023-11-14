@@ -24,6 +24,16 @@ const userSchema = new Schema({
 		type: String,
 		required: false,
 	},
+	showPhoneNumber: {
+		type: Boolean,
+		required: true,
+		default: true,
+	},
+	showEmail: {
+		type: Boolean,
+		required: true,
+		default: true,
+	},
 });
 
 module.exports = mongoose.model("User", userSchema);
