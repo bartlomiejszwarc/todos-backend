@@ -45,4 +45,18 @@ const createPost = async (req, res, next) => {
 	}
 };
 
-module.exports = { getFriendsPosts, createPost };
+const deletePost = async (req, res, next) => {
+	try {
+		if (!req?.params?.id) {
+			throw Error("Post ID must be provided");
+		}
+		const post = await Post.findByIdAndDelete(req.params.id);
+		if (!post) throw Error("Post not found");
+
+		res.status(200).json({ message: "Post deleted successfully." });
+	} catch (e) {
+		res.status(400).json({ message: e.message });
+	}
+};
+
+module.exports = { getFriendsPosts, createPost, deletePost };

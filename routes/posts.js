@@ -4,9 +4,11 @@ const router = express.Router();
 const {
 	createPost,
 	getFriendsPosts,
+	deletePost,
 } = require("../controllers/postController");
 
 router.post("/create", createPost);
+router.delete("/:id", deletePost);
 router.get("/:id", getFriendsPosts);
 
 module.exports = router;
