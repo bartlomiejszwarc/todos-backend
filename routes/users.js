@@ -9,6 +9,7 @@ const {
 	acceptFriendsRequest,
 	declineFriendsRequest,
 	updateUserDetails,
+	deleteUser,
 } = require("../controllers/userController");
 
 router.get("/:keyword", getUsersByKeyword);
@@ -18,5 +19,7 @@ router.post("/invite", sendFriendsInvitation);
 router.post("/requests/accept", acceptFriendsRequest);
 router.post("/requests/decline", declineFriendsRequest);
 router.put("/details", updateUserDetails);
+
+router.delete("/:id", deleteUser);
 
 module.exports = router;

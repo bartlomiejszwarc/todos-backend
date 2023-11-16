@@ -65,6 +65,17 @@ const updateUserDetails = async (req, res) => {
 	}
 };
 
+const deleteUser = async (req, res) => {
+	try {
+		if (!req.params.id) throw Error("User ID must be provided");
+		const user = await User.findByIdAndDelete(req.params.id);
+		if (!user) throw Error("User not found");
+		res.status(200).json({ message: "User deleted" });
+	} catch (e) {
+		res.status(400).json({ message: e.message });
+	}
+};
+
 const getFriendsRequests = async (req, res) => {
 	try {
 		if (!req?.params?.id) throw Error("User ID must be provided");
@@ -220,4 +231,5 @@ module.exports = {
 	acceptFriendsRequest,
 	declineFriendsRequest,
 	updateUserDetails,
+	deleteUser,
 };
