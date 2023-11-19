@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const FriendsRequest = require("../models/friendsRequestModel");
+const bcrypt = require("bcrypt");
 
 const getUsersByKeyword = async (req, res) => {
 	try {
@@ -35,6 +36,8 @@ const getUserDetails = async (req, res) => {
 				displayName: user.displayName,
 				email: user.showEmail ? user.email : null,
 				phoneNumber: user.showPhoneNumber ? user.phoneNumber : null,
+				country: user.country,
+				city: user.city,
 			},
 		});
 	} catch (e) {
@@ -45,6 +48,7 @@ const getUserDetails = async (req, res) => {
 const updateUserDetails = async (req, res) => {
 	try {
 		if (!req.query.userId) throw Error("User ID must be provided");
+
 		const user = await User.findOneAndUpdate(
 			{ _id: req.query.userId },
 			{
@@ -54,14 +58,61 @@ const updateUserDetails = async (req, res) => {
 					email: req.body.email,
 					showPhoneNumber: req.body.showPhoneNumber,
 					showEmail: req.body.showEmail,
+					country: req.body.country,
+					city: req.body.city,
 				},
 			},
 			{ new: true }
 		);
-		user.save();
 		res.status(200).json({ message: "User's details updated.", user: user });
 	} catch (e) {
-		res.status(400).json({ message: e });
+		res.status(400).json({ message: e.message });
+	}
+};
+
+const updateUserProfileImage = async (req, res) => {
+	try {
+		if (!req.query.userId) throw Error("User ID must be provided");
+		if (!req.file) throw "File not provided";
+		const base64Image =
+			"data:" +
+			req?.file?.mimetype +
+			";base64," +
+			req?.file?.buffer?.toString("base64");
+		const user = await User.findOneAndUpdate(
+			{ _id: req.query.userId },
+			{
+				$set: {
+					profileImage: base64Image,
+				},
+			},
+			{ new: true }
+		);
+		res
+			.status(200)
+			.json({ message: "User's profile image updated.", user: user });
+	} catch (e) {
+		res.status(400).json({ message: e.message });
+	}
+};
+const changeUserPassword = async (req, res) => {
+	try {
+		if (!req.query.userId) throw Error("User ID must be provided");
+		if (!req?.body?.password) throw Error("Password must be provided");
+		if (!req?.body?.repeatedPassword)
+			throw Error("Repeated password must be provided");
+		const password = req.body?.password;
+		const repeatedPassword = req.body?.repeatedPassword;
+		if (password !== repeatedPassword) throw Error("Passwords do not match");
+		const salt = await bcrypt.genSalt(10);
+		const hash = await bcrypt.hash(password, salt);
+		const user = await User.findByIdAndUpdate(req.query.userId, {
+			password: hash,
+		});
+		user.save();
+		res.status(200).json({ message: "Password updated successfully" });
+	} catch (e) {
+		res.status(400).json({ message: e.message });
 	}
 };
 
@@ -232,4 +283,6 @@ module.exports = {
 	declineFriendsRequest,
 	updateUserDetails,
 	deleteUser,
+	changeUserPassword,
+	updateUserProfileImage,
 };

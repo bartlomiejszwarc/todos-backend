@@ -16,8 +16,8 @@ app.use(
 		extended: true,
 	})
 );
-app.use(bodyParser.json());
 app.use(cors());
+app.use(bodyParser.json({ limit: "35mb" }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", checkAuth, tasksRoutes);

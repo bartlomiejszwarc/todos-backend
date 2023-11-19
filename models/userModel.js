@@ -24,6 +24,14 @@ const userSchema = new Schema({
 		type: String,
 		required: false,
 	},
+	country: {
+		type: String,
+		required: false,
+	},
+	city: {
+		type: String,
+		required: false,
+	},
 	showPhoneNumber: {
 		type: Boolean,
 		required: true,
@@ -33,6 +41,10 @@ const userSchema = new Schema({
 		type: Boolean,
 		required: true,
 		default: true,
+	},
+	profileImage: {
+		type: String,
+		required: false,
 	},
 });
 

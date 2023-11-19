@@ -10,7 +10,7 @@ const checkAuth = async (req, res, next) => {
 		if (decodedToken._id !== req.query.userId)
 			throw Error("User unauthorized.");
 		const user = await User.findById(decodedToken._id).select(
-			"_id username email phoneNumber displayName showPhoneNumber showEmail"
+			"_id username email phoneNumber displayName showPhoneNumber showEmail country city profileImage"
 		);
 		req.user = user;
 		next();

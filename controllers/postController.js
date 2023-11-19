@@ -35,6 +35,9 @@ const createPost = async (req, res, next) => {
 		if (!req?.body?.owner) {
 			throw Error("Post must have the owner.");
 		}
+		if (req.body.text.length > 200)
+			throw Error("Post text cant have more than 200 characters");
+
 		const post = await Post.create({
 			text: req?.body?.text,
 			owner: req?.body?.owner,
