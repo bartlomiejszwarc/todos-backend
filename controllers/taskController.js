@@ -37,6 +37,26 @@ const createTask = async (req, res, next) => {
 	}
 };
 
+const editTask = async (req, res, next) => {
+	try {
+		if (!req?.body?._id) throw Error("Task ID must be provided");
+		const task = await Task.findByIdAndUpdate(
+			req.body._id,
+			{
+				text: req.body?.text,
+				description: req.body.description,
+				deadline: req.body?.deadline,
+				priority: req?.body?.priority,
+			},
+			{ new: true }
+		);
+		task.save();
+		res.status(200).json({ message: "Task updated", task: task });
+	} catch (e) {
+		res.status(400).json({ message: e.message });
+	}
+};
+
 const deleteTask = async (req, res, next) => {
 	try {
 		if (!req?.params?.id) {
@@ -48,4 +68,4 @@ const deleteTask = async (req, res, next) => {
 		res.status(400).json({ message: e.message });
 	}
 };
-module.exports = { getUserTasks, createTask, deleteTask };
+module.exports = { getUserTasks, createTask, deleteTask, editTask };

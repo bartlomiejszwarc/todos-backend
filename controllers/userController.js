@@ -38,6 +38,7 @@ const getUserDetails = async (req, res) => {
 				phoneNumber: user.showPhoneNumber ? user.phoneNumber : null,
 				country: user.country,
 				city: user.city,
+				profileImage: user.profileImage,
 			},
 		});
 	} catch (e) {
@@ -274,6 +275,36 @@ const sendFriendsInvitation = async (req, res) => {
 		res.status(400).json({ message: e.message });
 	}
 };
+
+const removeUserFromFriendsList = async (req, res) => {
+	try {
+		if (!req?.query?.userId) throw Error(" User ID must be provided");
+		if (!req?.params?.id) throw Error(" User ID must be provided");
+		const userFriends = await FriendsRequest.findOneAndUpdate(
+			{
+				ownerId: req.query.userId,
+			},
+			{ $pullAll: { friends: [req.params.id] } },
+			{ new: true }
+		);
+
+		if (!userFriends) throw Error("Wrong ID");
+		const removedUserFriends = await FriendsRequest.findOneAndUpdate(
+			{
+				ownerId: req?.params?.id,
+			},
+			{
+				$pullAll: { friends: [req.query.userId] },
+			},
+			{ new: true }
+		);
+		if (!removedUserFriends) throw Error("Wrong ID");
+
+		res.status(200).json({ message: "Friend removed", friends: userFriends });
+	} catch (e) {
+		res.status(400).json({ message: e.message });
+	}
+};
 module.exports = {
 	getUsersByKeyword,
 	sendFriendsInvitation,
@@ -285,4 +316,5 @@ module.exports = {
 	deleteUser,
 	changeUserPassword,
 	updateUserProfileImage,
+	removeUserFromFriendsList,
 };

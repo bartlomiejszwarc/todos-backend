@@ -5,6 +5,7 @@ const {
 	createPost,
 	getFriendsPosts,
 	deletePost,
+	editPost,
 } = require("../controllers/postController");
 
 router.post("/create", createPost);

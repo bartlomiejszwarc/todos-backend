@@ -12,6 +12,7 @@ const {
 	deleteUser,
 	changeUserPassword,
 	updateUserProfileImage,
+	removeUserFromFriendsList,
 } = require("../controllers/userController");
 
 const multer = require("multer");
@@ -26,6 +27,7 @@ router.post("/requests/accept", acceptFriendsRequest);
 router.post("/requests/decline", declineFriendsRequest);
 router.put("/details", updateUserDetails);
 router.put("/password", changeUserPassword);
+router.delete("/:id", removeUserFromFriendsList);
 router.put("/profileimage", upload.single("file"), updateUserProfileImage);
 
 router.delete("/:id", deleteUser);
