@@ -12,6 +12,7 @@ const getUsersByKeyword = async (req, res) => {
 		})
 			.select("displayName")
 			.select("username")
+			.select("profileImage")
 			.select("pendingRequests")
 			.select("incomingRequests");
 		res.status(200).json({

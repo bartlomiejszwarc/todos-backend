@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+var passwordValidator = require("password-validator");
 
 const createToken = (_id) => {
 	return jwt.sign({ _id: _id }, process.env.SECRET, { expiresIn: "1d" });
@@ -15,7 +16,7 @@ const login = async (req, res, next) => {
 		if (!user) throw Error("User not found.");
 
 		const checkPassword = await bcrypt.compare(password, user.password);
-		if (!checkPassword) throw Error("Password is incorrect.");
+		if (!checkPassword) throw Error("Invalid credentials");
 		const token = createToken(user._id);
 
 		return res.status(200).json({
@@ -36,8 +37,25 @@ const register = async (req, res) => {
 		if (!username || !password || !displayName) {
 			throw Error("All fields are required");
 		}
+		var schema = new passwordValidator();
+		schema
+			.is()
+			.min(8)
+			.is()
+			.max(100)
+			.has()
+			.uppercase()
+			.has()
+			.lowercase()
+			.has()
+			.digits(2)
+			.has()
+			.not()
+			.spaces();
+		if (!schema.validate(password))
+			throw Error("Password is not strong enough");
 		const exists = await User.findOne({ username: req.body.username });
-		if (exists) {
+		if (username === exists?.username) {
 			throw Error("Username already is use");
 		}
 		const salt = await bcrypt.genSalt(10);
